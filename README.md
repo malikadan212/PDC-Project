@@ -1,5 +1,9 @@
 Community Detection-Based Parallel Quantum Circuit Simulator
-This project implements a parallel quantum circuit simulator using tensor networks and community detection algorithms. It leverages MPI for distributed computing and OpenCL for GPU-accelerated tensor operations, enabling efficient simulation of quantum circuits such as GHZ, QFT, and Random Quantum Circuits (RQC). The simulator is inspired by the paper "A community detection-based parallel algorithm for quantum circuit simulation using tensor networks" by Pastor et al. (2025).
+
+A high-performance parallel quantum circuit simulator using tensor networks and community detection algorithms. This project leverages MPI for distributed computing and OpenCL for GPU-accelerated tensor operations, enabling efficient simulation of quantum circuits such as GHZ, QFT, and Random Quantum Circuits (RQC). It is inspired by the paper "A community detection-based parallel algorithm for quantum circuit simulation using tensor networks" by Pastor et al. (2025).
+Overview
+This simulator implements a community detection-based approach to parallelize the contraction of tensor networks representing quantum circuits. Using the Girvan-Newman algorithm, it partitions tensor networks into communities, contracts them in parallel with MPI, and accelerates tensor operations with OpenCL on GPUs. The project supports three circuit types: GHZ, QFT, and RQC, and includes an adaptive CPU/GPU contraction strategy for optimal performance.
+
 Table of Contents
 
 Installation
@@ -13,130 +17,127 @@ License
 Acknowledgements
 Contact
 
+
 Installation
-To install and set up the project, follow these steps:
+Follow these steps to set up the project locally:
 
 Clone the repository:
-git clone https://github.com/yourusername/projectname.git
+git clone https://github.com/yourusername/quantum-circuit-simulator.git
+cd quantum-circuit-simulator
 
 
-Navigate to the project directory:
-cd projectname
-
-
-Create a virtual environment (recommended):
+Set up a virtual environment (recommended):
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 
-Install dependencies:
+Install Python dependencies:
 pip install -r requirements.txt
 
 
-Set up MPI and OpenCL:
+Install MPI and OpenCL:
 
-Ensure youomat have MPI (e.g., OpenMPI or MPICH) and OpenCL installed on your system.
-For GPU support, make sure your system has an OpenCL-compatible GPU and the necessary drivers installed.
+Ensure MPI (e.g., OpenMPI or MPICH) is installed on your system.
+For GPU support, install OpenCL and ensure your system has an OpenCL-compatible GPU with appropriate drivers.
+
 
 
 
 Usage
-To run the quantum circuit simulator, use the following command structure:
+Run the simulator using the simulator.py script with command-line arguments to specify the circuit type, number of qubits, depth (for RQC), and seed (for RQC).
+Command Syntax
 python simulator.py --circuit <circuit_type> --qubits <num_qubits> --depth <circuit_depth> --seed <random_seed>
 
-Command-Line Arguments
+Arguments
 
---circuit: Type of quantum circuit to simulate. Options: ghz, qft, rqc.
---qubits: Number of qubits in the circuit.
---depth: Depth of the circuit (only applicable for rqc).
---seed: Random seed for generating random circuits (only applicable for rqc).
-
-For example:
-
-Simulate a 10-qubit GHZ circuit:
-python simulator.py --circuit ghz --qubits 10
-
-
-Simulate a 5-qubit QFT circuit:
-python simulator.py --circuit qft --qubits 5
-
-
-Simulate a 4-qubit random quantum circuit with depth 3 and seed 42:
-python simulator.py --circuit rqc --qubits 4 --depth 3 --seed 42
-
+--circuit: Type of quantum circuit (ghz, qft, rqc).
+--qubits: Number of qubits in the circuit (integer).
+--depth: Depth of the circuit (integer, required for rqc).
+--seed: Random seed for generating RQC (integer, required for rqc).
 
 
 Features
 
-Circuit Types Supported: GHZ, QFT, and Random Quantum Circuits (RQC).
-Community Detection: Uses the Girvan-Newman algorithm to partition tensor networks into communities for efficient parallel processing.
-Parallelization: Utilizes MPI for distributed computing across multiple processes.
-GPU Acceleration: Leverages OpenCL for GPU-accelerated tensor contractions, optimizing performance for large-scale simulations.
-Adaptive Contraction: Dynamically chooses between CPU and GPU for tensor contractions based on tensor size to maximize efficiency.
+Supported Circuits: Simulates GHZ, QFT, and Random Quantum Circuits (RQC).
+Community Detection: Uses the Girvan-Newman algorithm to partition tensor networks for efficient parallel processing.
+Parallel Execution: Leverages MPI for distributed computing across multiple processes.
+GPU Acceleration: Utilizes OpenCL for fast tensor contractions on GPUs.
+Adaptive Contraction: Dynamically selects CPU or GPU for tensor contractions based on tensor size.
+
 
 Dependencies
-The project requires the following libraries and tools:
+The following libraries and tools are required:
 
-Python 3.x
+Python: 3.8 or higher
+Python Libraries:
 NumPy
 NetworkX
 Qiskit
-MPI (OpenMPI or MPICH)
-OpenCL
-(Any other specific libraries used in the project)
 
-You can install the Python dependencies using:
+
+System Requirements:
+MPI (OpenMPI or MPICH)
+OpenCL (for GPU acceleration)
+
+
+
+Install Python dependencies with:
 pip install -r requirements.txt
+
 
 Configuration
 
-OpenCL Device Selection: Set the OPENCL_DEVICE environment variable to specify which GPU device to use (if multiple are available).
-MPI Configuration: Ensure your MPI environment is properly configured for distributed execution. You may need to adjust settings based on your cluster or system setup.
+OpenCL Device Selection: Set the OPENCL_DEVICE environment variable to specify the GPU device (if multiple GPUs are available):
+export OPENCL_DEVICE=0  # Use the first GPU
+
+
+MPI Configuration: Ensure your MPI environment is configured for distributed execution. Adjust settings based on your cluster or system setup.
+
+
 
 Examples
-Here are some example commands and their expected outputs:
-
-Simulate a 10-qubit GHZ circuit:
+Simulate a 10-Qubit GHZ Circuit
 python simulator.py --circuit ghz --qubits 10
 
-
-Expected output: Simulation results including contraction times and final tensor values.
-
-
-Simulate a 5-qubit QFT circuit:
+Expected Output: Logs the simulation process, including timings for circuit creation, tensor network building, contraction, and total time. Results are saved as visualizations (e.g., ghz_timings_new.png).
+Simulate a 5-Qubit QFT Circuit
 python simulator.py --circuit qft --qubits 5
 
-
-Expected output: Similar to above, with results specific to the QFT circuit.
-
-
-Simulate a 4-qubit random quantum circuit with depth 3:
+Expected Output: Similar to the GHZ example, with results specific to the QFT circuit.
+Simulate a 4-Qubit Random Quantum Circuit
 python simulator.py --circuit rqc --qubits 4 --depth 3 --seed 42
 
-
-Expected output: Results for the random circuit, which may vary based on the seed.
-
-
+Expected Output: Outputs results for the random circuit, varying based on the seed.
 
 Contributing
-We welcome contributions to improve the simulator! To contribute:
+Contributions are welcome! To contribute:
 
 Fork the repository.
-Create a new branch for your feature or bug fix.
-Make your changes and ensure they follow the project's coding style.
-Add tests for new features or fixes.
-Submit a pull request with a clear description of your changes.
+Create a feature branch:git checkout -b feature/your-feature-name
+
+
+Commit your changes:git commit -m "Add your feature description"
+
+
+Push to your fork:git push origin feature/your-feature-name
+
+
+Open a pull request with a detailed description of your changes.
+
+Please ensure your code follows the project's style guidelines and includes tests for new features.
 
 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License. See the LICENSE file for details.
+
 Acknowledgements
 
-Libraries and Tools: We thank the developers of NumPy, NetworkX, Qiskit, MPI, and OpenCL for their invaluable contributions to scientific computing.
-Research Inspiration: This project was inspired by the paper "A community detection-based parallel algorithm for quantum circuit simulation using tensor networks" by Pastor et al. (2025).
+Libraries and Tools: Thanks to the developers of NumPy, NetworkX, Qiskit, MPI, and OpenCL for their contributions to scientific computing.
+Research Inspiration: This project builds on the work of Pastor et al. (2025) in their paper "A community detection-based parallel algorithm for quantum circuit simulation using tensor networks".
+
 
 Contact
-For questions, issues, or suggestions, please contact:
+For questions, issues, or suggestions, reach out via:
 
-Your Name: your.email@example.com
-GitHub Issues: Project Issues Page
+GitHub Issues: Submit an Issue
+Email: your.email@example.com
 
